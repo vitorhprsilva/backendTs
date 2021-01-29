@@ -4,22 +4,21 @@ const passport = require('passport')
 const initializePassport = require('../config/auth');
 const models = require('../models');
 
-initializePassport(passport)
-
 
 exports.createLogin = async (req, res, next) => {
-    const { name, password } = req.body;
+    const { email, password } = req.body;
+
 
     try {
-        const name = req.body.name;
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        // const email = req.body.email;
+        // const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-        await models.usuario.create({name, hashedPassword});
+        await models.usuario.create({email, password});
 
         res.status(201).send({
             message: 'login adicionado com sucesso!',
             body: {
-            login: { name, hashedPassword },
+            login: { email, password },
             },
         });
 
@@ -31,19 +30,18 @@ exports.createLogin = async (req, res, next) => {
         
     }
 
-
 };
 
 exports.mostraUser = async (req,res) => {
     const usuarios = await models.usuario.findAll();
 
     usuarios.forEach((usuario) => {
-        console.log(usuario.name)
+        console.log(usuario.email)
     });
 
     res.status(201).send({
         body: {
-            name: usuarios.name
+            email: usuarios.email
         },
     })
 
@@ -51,25 +49,17 @@ exports.mostraUser = async (req,res) => {
 
 exports.verificaLogin = async (req, res) => {
 
+    const email = req.body.email;
+    const project = await models.usuario.findOne({ where: { email: email } });
 
-    try {
-        const name = req.body.name;
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    } catch (error) {
-        
-    }
-    
-    
-    const usuarios = await models.usuario.findOne({where: {name: name}}).then(()=>{
+    if(project!=null){
         res.status(201).send({
             message: 'logado',
-        }).end();
-    }).catch(
+        })
+    } else {
         res.status(400).send({
             message: 'login ou senha errado',
-        }).end()
-    );
-
-
+        })
+    }
 
 }

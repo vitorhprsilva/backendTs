@@ -8,9 +8,10 @@ const routes = new Router();
 routes.get('/', (req, res) => {
     res.status(200).send({
         success: 'true',
-        message: 'Seja bem-vindo(a) a API Node.js + PostgreSQL + Azure!',
+        message: 'Bem vindo',
         version: '1.0.0',
     });
+    console.log('conectado')
 });
 
 routes.post('/login', login.createLogin);
